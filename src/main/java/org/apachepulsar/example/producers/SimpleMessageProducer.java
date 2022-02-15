@@ -27,14 +27,17 @@ public class SimpleMessageProducer {
                     .topic(TOPIC_NAME)
                     .create();
 
-            TypedMessageBuilder<byte[]> typedMessageBuilder = producer.newMessage();
-            typedMessageBuilder.key("hi-there");
-            typedMessageBuilder.value("Hi! There, How are you?".getBytes(StandardCharsets.UTF_8));
-            typedMessageBuilder.property("sender-name", "naveen");
-            typedMessageBuilder.property("when", System.currentTimeMillis() + "");
+            for (int i = 0; i < 100; i++) {
+                TypedMessageBuilder<byte[]> typedMessageBuilder = producer.newMessage();
+                typedMessageBuilder.key("hi-there");
+                typedMessageBuilder.value(("Hi! There, How are you? Hope you are doing fine - " + i)
+                        .getBytes(StandardCharsets.UTF_8));
+                typedMessageBuilder.property("sender-name", "naveen");
+                typedMessageBuilder.property("when", System.currentTimeMillis() + "");
 
-            MessageId messageId = typedMessageBuilder.send();
-
+                MessageId messageId = typedMessageBuilder.send();
+                System.out.println("Message Id " + messageId);
+            }
         } finally {
             if (Objects.nonNull(pulsarClient)) {
                 pulsarClient.close();
