@@ -1,0 +1,9 @@
+className: org.apachepulsar.example.functions.InitCapFunction
+name: InitCapFunction
+tenant: research-and-development
+namespace: development
+inputs:
+  - research-and-development/development/words
+output: research-and-development/development/initcapedwords
+autoAck: true
+processingGuarantees: ATLEAST_ONCE
