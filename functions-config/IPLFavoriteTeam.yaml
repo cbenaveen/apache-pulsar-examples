@@ -1,0 +1,9 @@
+className: org.apachepulsar.example.functions.IPLFavoriteTeam
+name: IPLFavoriteTeam
+tenant: ipl
+namespace: 2022
+inputs:
+  - ipl/2022/votes
+output: ipl/2022/aggrigated-votes
+autoAck: true
+processingGuarantees: ATLEAST_ONCE
