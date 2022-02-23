@@ -20,6 +20,10 @@ import java.util.Objects;
  *
  * Output:
  *  MI:4
+ *
+ *
+ *  MI::0
+ *  MI:-1:10
  */
 public class IPLFavoriteTeam implements Function<String, String> {
     @Override
@@ -36,6 +40,11 @@ public class IPLFavoriteTeam implements Function<String, String> {
 
         final String[] splitMessage = input.split(":");
         final String teamName = splitMessage[0];
+
+        if (splitMessage[1] == null || splitMessage[1].trim().isEmpty()) {
+            throw new IllegalArgumentException("Vote value is invalid");
+        }
+
         final int vote = Integer.parseInt(splitMessage[1]);
         logger.info("Team Name {}, vote {}" + teamName, vote);
 
