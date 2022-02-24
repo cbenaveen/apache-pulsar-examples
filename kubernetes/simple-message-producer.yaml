@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-message-producer
+spec:
+  containers:
+    - image: apache-pulsar-examples/simple-message-producer:0.0.1
+      name: simple-message-producer
+      env:
+        - name: PULSAR_SERVICE_URL
+          value: pulsar://pulsar-mini-proxy:6650
