@@ -4,6 +4,7 @@ import org.apache.pulsar.client.api.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class DLQConsumer {
@@ -27,7 +28,12 @@ public class DLQConsumer {
                     .subscribe();
 
             while(true) {
+//                Message<byte[]> message = consumer.receive();
                 Message<byte[]> message = consumer.receive(30, TimeUnit.SECONDS);
+                if (Objects.isNull(message)) {
+                    continue;
+                }
+
                 String messageValue = new String(message.getData(), StandardCharsets.UTF_8);
 
                 String messageKey = message.getKey();
