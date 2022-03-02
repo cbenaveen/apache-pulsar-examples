@@ -1,0 +1,71 @@
+version: "3.5"
+services:
+  pulsar:
+    image: "apachepulsar/pulsar:latest"
+    command: bin/pulsar standalone
+    environment:
+      PULSAR_MEM: " -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"
+    volumes:
+      - ./pulsar/data:/pulsar/data
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - network_test_bed
+
+  pulsar-manager:
+    image: "apachepulsar/pulsar-manager:latest"
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    depends_on:
+      - pulsar
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
+    networks:
+      - network_test_bed
+
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    networks:
+      - network_test_bed
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus:/etc/prometheus
+    depends_on:
+      - pulsar
+    ports:
+      - "9090:9090"
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    networks:
+      - network_test_bed
+
+  grafana:
+    image: streamnative/apache-pulsar-grafana-dashboard:latest
+    environment:
+      PULSAR_CLUSTER: "standalone"
+      PULSAR_PROMETHEUS_URL: "http://163.221.68.230:9090"
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - network_test_bed
+    depends_on:
+      - prometheus
+
+
+networks:
+  network_test_bed:
+    name: network_test_bed
+    driver: bridge
